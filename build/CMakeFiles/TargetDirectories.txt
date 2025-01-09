@@ -1,0 +1,3 @@
+/home/yorgundemokrat/cpptr/build/CMakeFiles/rebuild_cache.dir
+/home/yorgundemokrat/cpptr/build/CMakeFiles/edit_cache.dir
+/home/yorgundemokrat/cpptr/build/CMakeFiles/OpenCVExample.dir

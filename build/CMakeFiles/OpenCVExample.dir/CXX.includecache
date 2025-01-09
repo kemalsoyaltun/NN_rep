@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/yorgundemokrat/cpptr/MNISTread.h
+vector
+-
+string
+-
+
+/home/yorgundemokrat/cpptr/neuralnetw.cpp
+vector
+-
+iostream
+-
+cstdlib
+-
+cassert
+-
+cmath
+-
+algorithm
+-
+MNISTread.h
+/home/yorgundemokrat/cpptr/MNISTread.h
+
