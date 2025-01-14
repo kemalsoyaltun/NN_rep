@@ -21,13 +21,14 @@ class Neuron
         void forward(const std::vector<Neuron> prevLayer);
         void forward(const std::vector<double> inputs);
         int getOutputVal(void) const {return outputVal;}
+        std::vector<unsigned> index;
     private:
         static double transferFunction(double x) { return 1.0 / (1.0 + exp(-x)); }
         void setActivationFunction(double ftype = 0);
         // void setConnections(unsigned connectionIndexs);
 
         std::vector<Connection> connections; 
-        std::vector<unsigned> index;
+        
         double outputVal;
 };
 
@@ -39,8 +40,8 @@ Neuron::Neuron(std::vector<unsigned> connectionIndexs, unsigned myIndex, unsigne
         connections.back().weight = rand() / double(RAND_MAX);
         connections.back().from = connectionIndexs[c];
     }
-    index.push_back(myIndex);
     index.push_back(layerIndex);
+    index.push_back(myIndex);
     outputVal = 0.0;
 }
 
@@ -52,8 +53,8 @@ Neuron::Neuron(unsigned prevLayerSize, unsigned myIndex, unsigned layerIndex)
         connections.back().weight = rand() / double(RAND_MAX);
         connections.back().from = c;
     }
-    index.push_back(myIndex);
     index.push_back(layerIndex);
+    index.push_back(myIndex);
     outputVal = 0.0;
 }
 
@@ -86,8 +87,9 @@ class Net
         void learning(const std::vector<double> targetVals, const std::vector<double> inputs);
         void feedForward(const std::vector<double> &inputVals);
         std::vector<double> getResults() const {return myOutputs;}
-    private:
         std::vector<Layer> myLayers;
+    private:
+        
         std::vector<double> myOutputs;
         std::vector<Connection> Myweights;
 };
@@ -96,32 +98,33 @@ Net::Net(const std::vector<unsigned> &topology)
 {
     unsigned numLayers = topology.size();
     myLayers.push_back(Layer());
-    
-    for(unsigned Neuron_n = 0; Neuron_n <= topology[0]; ++Neuron_n){
+
+    for(unsigned Neuron_n = 0; Neuron_n < topology[0]; Neuron_n++){
         myLayers.back().push_back(Neuron(0, Neuron_n, 0));
     }
     for(unsigned Layer_n = 1; Layer_n < numLayers; Layer_n++)
     {
         myLayers.push_back(Layer());
-        for(unsigned Neuron_n = 0; Neuron_n <= topology[Layer_n]; ++Neuron_n){
-            myLayers.back().push_back(Neuron(topology[Layer_n-2], Neuron_n, Layer_n));
+        for(unsigned Neuron_n = 0; Neuron_n < topology[Layer_n]; Neuron_n++){
+            myLayers.back().push_back(Neuron(topology[Layer_n-1], Neuron_n, Layer_n));
         }
     }
+    //for döngüleri birleştirilebilir
 }
 
 Net::Net(const std::vector<unsigned> &topology, const std::vector<unsigned> &connectionTopology)
 {
     unsigned numLayers = topology.size();
     myLayers.push_back(Layer());
-    
-    for(unsigned Neuron_n = 0; Neuron_n <= topology[0]; ++Neuron_n){
+
+    for(unsigned Neuron_n = 0; Neuron_n < topology[0]; Neuron_n++){
         myLayers.back().push_back(Neuron(0, Neuron_n, 0));
     }
     for(unsigned Layer_n = 1; Layer_n < numLayers; Layer_n++)
     {
         myLayers.push_back(Layer());
-        for(unsigned Neuron_n = 0; Neuron_n <= topology[Layer_n]; ++Neuron_n){
-            myLayers.back().push_back(Neuron(topology[Layer_n-2], Neuron_n, Layer_n));
+        for(unsigned Neuron_n = 0; Neuron_n < topology[Layer_n]; Neuron_n++){
+            myLayers.back().push_back(Neuron(topology[Layer_n-1], Neuron_n, Layer_n));
         }
     }
 }
@@ -133,9 +136,9 @@ void Net::feedForward(const std::vector<double> &inputVals)
         myLayers[0][i].forward(inputVals);
     }
 
-    for (unsigned Layen_n = 1; Layen_n < myLayers.size(); ++Layen_n)
+    for (unsigned Layen_n = 1; Layen_n < myLayers.size(); Layen_n++)
     {
-        for (unsigned Node_n = 0; Node_n < myLayers[Layen_n].size() -1; ++Node_n)
+        for (unsigned Node_n = 0; Node_n < myLayers[Layen_n].size(); Node_n++)
         {
             myLayers[Layen_n][Node_n].forward(myLayers[Layen_n-1]);
         }
@@ -166,6 +169,15 @@ int main()
     myNet.feedForward(inputs);
 
     std::cout << "Output: " << myNet.getResults()[0] << std::endl;
+
+    for(int i = 0; i < myNet.myLayers.size(); i++)
+    {
+        for(int j = 0; j < myNet.myLayers[i].size(); j++)
+        {
+            std::cout << "Layer index: " << myNet.myLayers[i][j].index[0] << ",   Neuron index: " << myNet.myLayers[i][j].index[1] << std::endl;
+        }
+    }
+    
     return 0;
 }
 
